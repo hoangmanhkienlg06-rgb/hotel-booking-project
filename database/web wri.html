@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Tập Sắp Xếp Câu Tiếng Anh</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #4a6ee0;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+        
+        .exercise-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .letter-info {
+            background-color: #e8f4fc;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+        
+        .letter-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .letter-description {
+            color: #555;
+        }
+        
+        .letter-content {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            border-left: 4px solid #4a6ee0;
+        }
+        
+        .sortable-container {
+            min-height: 300px;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: #f8f9fa;
+        }
+        
+        .sentence-item {
+            background-color: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            cursor: move;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .sentence-item:hover {
+            background-color: #f0f5ff;
+            border-color: #a3c4ff;
+            transform: translateY(-2px);
+        }
+        
+        .sentence-item.dragging {
+            opacity: 0.5;
+            background-color: #e3f2fd;
+        }
+        
+        .sentence-number {
+            display: inline-block;
+            background-color: #4a6ee0;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            margin-right: 12px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        
+        .sentence-text {
+            flex-grow: 1;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .action-button {
+            background-color: #4a6ee0;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            font-size: 1rem;
+        }
+        
+        .action-button:hover {
+            background-color: #3a5bc7;
+        }
+        
+        .action-button.secondary {
+            background-color: #6c757d;
+        }
+        
+        .action-button.secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .result-container {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .result-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .result-content {
+            background-color: white;
+            border-radius: 6px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            line-height: 1.8;
+        }
+        
+        .correct {
+            color: #28a745;
+            font-weight: 600;
+        }
+        
+        .incorrect {
+            color: #dc3545;
+            font-weight: 600;
+        }
+        
+        .score-display {
+            text-align: center;
+            font-size: 1.3rem;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .exercise-section {
+                padding: 15px;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .action-button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Bài Tập Sắp Xếp Câu Tiếng Anh</h1>
+            <p class="subtitle">Kéo thả để sắp xếp các câu thành bức thư hoàn chỉnh</p>
+        </header>
+        
+        <div class="exercise-section" id="exercise1">
+            <h2 class="section-title">Bài 1: Thư trả lời bạn bè</h2>
+            
+            <div class="letter-info">
+                <div class="letter-title">Thông tin về bức thư:</div>
+                <div class="letter-description">Đây là thư trả lời một người bạn về thông báo từ câu lạc bộ. Bạn cần sắp xếp các câu dưới đây theo đúng thứ tự.</div>
+            </div>
+            
+            <div class="sortable-container" id="sortable1">
+                <!-- Các câu sẽ được thêm bằng JavaScript -->
+            </div>
+            
+            <div class="controls">
+                <button class="action-button" onclick="checkOrder(1)">Kiểm tra đáp án</button>
+                <button class="action-button secondary" onclick="resetExercise(1)">Làm lại</button>
+                <button class="action-button secondary" onclick="showAnswer(1)">Xem đáp án</button>
+            </div>
+            
+            <div class="result-container" id="result1">
+                <div class="result-title">Kết quả</div>
+                <div class="result-content" id="result-content1"></div>
+                <div class="score-display" id="score1"></div>
+            </div>
+        </div>
+        
+        <div class="exercise-section" id="exercise2">
+            <h2 class="section-title">Bài 2: Thư gửi quản lý câu lạc bộ</h2>
+            
+            <div class="letter-info">
+                <div class="letter-title">Thông tin về bức thư:</div>
+                <div class="letter-description">Đây là thư gửi quản lý câu lạc bộ để bày tỏ cảm xúc và đưa ra đề xuất. Bạn cần sắp xếp các câu dưới đây theo đúng thứ tự.</div>
+            </div>
+            
+            <div class="sortable-container" id="sortable2">
+                <!-- Các câu sẽ được thêm bằng JavaScript -->
+            </div>
+            
+            <div class="controls">
+                <button class="action-button" onclick="checkOrder(2)">Kiểm tra đáp án</button>
+                <button class="action-button secondary" onclick="resetExercise(2)">Làm lại</button>
+                <button class="action-button secondary" onclick="showAnswer(2)">Xem đáp án</button>
+            </div>
+            
+            <div class="result-container" id="result2">
+                <div class="result-title">Kết quả</div>
+                <div class="result-content" id="result-content2"></div>
+                <div class="score-display" id="score2"></div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Bài tập sắp xếp câu giúp cải thiện kỹ năng viết thư tiếng Anh</p>
+        </footer>
+    </div>
+
+    <script>
+        // Dữ liệu các câu trong hai bức thư
+        const letters = {
+            1: {
+                title: "Thư trả lời bạn bè",
+                correctOrder: [
+                    "Dear Manh Kien,",
+                    "It's great to hear from you! I'm doing well, thanks for asking.",
+                    "How about you? Yes, I've received the notice from (CLUB NAME), and I completely agree.",
+                    "—(good news use: it's such exciting news! / bad news use: I felt a deep sense of regret when I heard this.)",
+                    "I think reaching out to the club manager is an excellent idea.",
+                    "You could suggest some engaging activities or possible improvements.",
+                    "In fact, we could even draft the email together to make it more persuasive.",
+                    "Let me know your thoughts!",
+                    "Looking forward to your reply."
+                ],
+                shuffled: []
+            },
+            2: {
+                title: "Thư gửi quản lý câu lạc bộ",
+                correctOrder: [
+                    "Dear Sir,",
+                    "My name is Hoang Manh Kien, and I have been a member of the club for six months.",
+                    "I am writing to express my excitement and provide a suggestion regarding the recent announcement about our club.",
+                    "According to the notice..................................................(Đề bài).......................................",
+                    "Honestly, I was thrilled when I received this news.",
+                    "In my opinion,.......................................(Quan điểm)..........................................................",
+                    "I hope my recommendations will be helpful in ensuring member satisfaction.",
+                    "I look forward to your response and hope my suggestions will be considered.",
+                    "Best regards, Hoang Manh Kien"
+                ],
+                shuffled: []
+            }
+        };
+
+        // Khởi tạo bài tập
+        function initExercises() {
+            // Khởi tạo cho bài 1
+            shuffleSentences(1);
+            renderSentences(1);
+            
+            // Khởi tạo cho bài 2
+            shuffleSentences(2);
+            renderSentences(2);
+            
+            // Thêm tính năng kéo thả
+            initDragAndDrop();
+        }
+
+        // Xáo trộn các câu
+        function shuffleSentences(exerciseId) {
+            const letter = letters[exerciseId];
+            // Tạo bản sao của mảng đúng thứ tự
+            letter.shuffled = [...letter.correctOrder];
+            
+            // Xáo trộn mảng
+            for (let i = letter.shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [letter.shuffled[i], letter.shuffled[j]] = [letter.shuffled[j], letter.shuffled[i]];
+            }
+        }
+
+        // Hiển thị các câu
+        function renderSentences(exerciseId) {
+            const container = document.getElementById(`sortable${exerciseId}`);
+            const letter = letters[exerciseId];
+            
+            container.innerHTML = '';
+            
+            letter.shuffled.forEach((sentence, index) => {
+                const sentenceElement = document.createElement('div');
+                sentenceElement.className = 'sentence-item';
+                sentenceElement.setAttribute('draggable', 'true');
+                sentenceElement.setAttribute('data-index', index);
+                sentenceElement.innerHTML = `
+                    <span class="sentence-number">${index + 1}</span>
+                    <span class="sentence-text">${sentence}</span>
+                `;
+                container.appendChild(sentenceElement);
+            });
+            
+            // Ẩn kết quả cũ
+            document.getElementById(`result${exerciseId}`).style.display = 'none';
+        }
+
+        // Khởi tạo tính năng kéo thả
+        function initDragAndDrop() {
+            const containers = document.querySelectorAll('.sortable-container');
+            
+            containers.forEach(container => {
+                // Sự kiện khi bắt đầu kéo
+                container.addEventListener('dragstart', function(e) {
+                    if (e.target.classList.contains('sentence-item')) {
+                        e.target.classList.add('dragging');
+                        e.dataTransfer.setData('text/plain', e.target.getAttribute('data-index'));
+                    }
+                });
+                
+                // Sự kiện khi kéo qua phần tử
+                container.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    const draggingElement = document.querySelector('.sentence-item.dragging');
+                    const afterElement = getDragAfterElement(container, e.clientY);
+                    
+                    if (afterElement == null) {
+                        container.appendChild(draggingElement);
+                    } else {
+                        container.insertBefore(draggingElement, afterElement);
+                    }
+                });
+                
+                // Sự kiện khi kết thúc kéo
+                container.addEventListener('dragend', function(e) {
+                    if (e.target.classList.contains('sentence-item')) {
+                        e.target.classList.remove('dragging');
+                        updateSentenceNumbers(container);
+                    }
+                });
+            });
+        }
+
+        // Xác định vị trí thả
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('.sentence-item:not(.dragging)')];
+            
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        // Cập nhật số thứ tự sau khi kéo thả
+        function updateSentenceNumbers(container) {
+            const sentences = container.querySelectorAll('.sentence-item');
+            sentences.forEach((sentence, index) => {
+                const numberSpan = sentence.querySelector('.sentence-number');
+                numberSpan.textContent = index + 1;
+                sentence.setAttribute('data-index', index);
+            });
+        }
+
+        // Kiểm tra đáp án
+        function checkOrder(exerciseId) {
+            const container = document.getElementById(`sortable${exerciseId}`);
+            const sentences = container.querySelectorAll('.sentence-item');
+            const letter = letters[exerciseId];
+            const resultContainer = document.getElementById(`result${exerciseId}`);
+            const resultContent = document.getElementById(`result-content${exerciseId}`);
+            const scoreDisplay = document.getElementById(`score${exerciseId}`);
+            
+            // Lấy thứ tự hiện tại
+            const currentOrder = Array.from(sentences).map(sentence => {
+                const textElement = sentence.querySelector('.sentence-text');
+                return textElement.textContent;
+            });
+            
+            // Kiểm tra từng câu
+            let correctCount = 0;
+            let resultHTML = '<ol>';
+            
+            for (let i = 0; i < currentOrder.length; i++) {
+                const isCorrect = currentOrder[i] === letter.correctOrder[i];
+                
+                if (isCorrect) {
+                    correctCount++;
+                    resultHTML += `<li><span class="correct">✓ ${currentOrder[i]}</span></li>`;
+                } else {
+                    resultHTML += `<li><span class="incorrect">✗ ${currentOrder[i]}</span>`;
+                    resultHTML += `<br><span class="correct">(Đúng phải là: ${letter.correctOrder[i]})</span></li>`;
+                }
+            }
+            
+            resultHTML += '</ol>';
+            
+            // Hiển thị kết quả
+            resultContent.innerHTML = resultHTML;
+            scoreDisplay.textContent = `Bạn đã sắp xếp đúng ${correctCount}/${letter.correctOrder.length} câu`;
+            resultContainer.style.display = 'block';
+            
+            // Cuộn đến kết quả
+            resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Hiển thị đáp án đúng
+        function showAnswer(exerciseId) {
+            const letter = letters[exerciseId];
+            const resultContainer = document.getElementById(`result${exerciseId}`);
+            const resultContent = document.getElementById(`result-content${exerciseId}`);
+            const scoreDisplay = document.getElementById(`score${exerciseId}`);
+            
+            let resultHTML = '<ol>';
+            
+            letter.correctOrder.forEach(sentence => {
+                resultHTML += `<li>${sentence}</li>`;
+            });
+            
+            resultHTML += '</ol>';
+            
+            // Hiển thị kết quả
+            resultContent.innerHTML = resultHTML;
+            scoreDisplay.textContent = "Đây là đáp án đúng của bài tập";
+            resultContainer.style.display = 'block';
+            
+            // Cuộn đến kết quả
+            resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Đặt lại bài tập
+        function resetExercise(exerciseId) {
+            shuffleSentences(exerciseId);
+            renderSentences(exerciseId);
+        }
+
+        // Khởi tạo khi trang web được tải
+        document.addEventListener('DOMContentLoaded', function() {
+            initExercises();
+        });
+    </script>
+</body>
+</html>

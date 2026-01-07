@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Booking - Đặt phòng khách sạn</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-hotel"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>LuxStay Booking</h1>
+                    <p>Trải nghiệm nghỉ dưỡng đẳng cấp</p>
+                </div>
+            </div>
+            
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html" class="nav-link active"><i class="fas fa-home"></i> Trang chủ</a></li>
+                    <li><a href="login.html" class="nav-link"><i class="fas fa-sign-in-alt"></i> Đăng nhập</a></li>
+                    <li><a href="register.html" class="nav-link"><i class="fas fa-user-plus"></i> Đăng ký</a></li>
+                    <li><a href="admin/login.html" class="nav-link"><i class="fas fa-cog"></i> Quản trị</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2>Khám Phá Phòng Nghỉ Sang Trọng</h2>
+            <p>Đặt phòng dễ dàng - Trải nghiệm tuyệt vời - Giá cả hợp lý</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container">
+        <h1 class="page-title">🛏️ Phòng Khách Sạn</h1>
+        <p class="subtitle">Chọn phòng phù hợp với nhu cầu của bạn</p>
+        
+        <div id="rooms-container" class="rooms-grid">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>Đang tải danh sách phòng...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Về LuxStay</h3>
+                <p>Nền tảng đặt phòng khách sạn hàng đầu Việt Nam, mang đến trải nghiệm đặt phòng dễ dàng, tiện lợi và đáng tin cậy.</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Liên kết nhanh</h3>
+                <ul class="footer-links">
+                    <li><a href="index.html"><i class="fas fa-chevron-right"></i> Trang chủ</a></li>
+                    <li><a href="booking.html"><i class="fas fa-chevron-right"></i> Đặt phòng</a></li>
+                    <li><a href="admin/login.html"><i class="fas fa-chevron-right"></i> Quản trị</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Điều khoản sử dụng</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Liên hệ</h3>
+                <div class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <span>1900 1234</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>support@luxstay.com</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Hà Nội, Việt Nam</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            <p>&copy; 2025 LuxStay Booking - Đồ án Phát triển Web</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        
+        // Sample room images from Unsplash
+        const roomImages = [
+            'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800',
+            'https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800',
+            'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800',
+            'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800',
+            'https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800',
+            'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800'
+        ];
+        
+        async function loadRooms() {
+            try {
+                const response = await fetch(`${API_URL}/rooms`);
+                const data = await response.json();
+                
+                const container = document.getElementById('rooms-container');
+                
+                if (data.success && data.data && data.data.length > 0) {
+                    container.innerHTML = '';
+                    
+                    data.data.forEach((room, index) => {
+                        const roomCard = createRoomCard(room, index);
+                        container.appendChild(roomCard);
+                    });
+                } else {
+                    container.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; padding: 4rem;">
+                            <i class="fas fa-hotel" style="font-size: 4rem; color: #94a3b8; margin-bottom: 1.5rem; display: block;"></i>
+                            <h3 style="font-size: 1.5rem; color: #1e293b; margin-bottom: 0.5rem;">Chưa có phòng nào</h3>
+                            <p style="color: #64748b;">Vui lòng thêm phòng trong trang quản trị</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading rooms:', error);
+                document.getElementById('rooms-container').innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 4rem; color: #ef4444;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 4rem; margin-bottom: 1.5rem; display: block;"></i>
+                        <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Lỗi kết nối</h3>
+                        <p style="margin-bottom: 1.5rem;">Không thể tải danh sách phòng. Vui lòng thử lại.</p>
+                        <button onclick="loadRooms()" style="background: #3b82f6; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                            <i class="fas fa-redo"></i> Thử lại
+                        </button>
+                    </div>
+                `;
+            }
+        }
+        
+        function createRoomCard(room, index) {
+            const card = document.createElement('div');
+            card.className = 'room-card';
+            
+            const imageUrl = roomImages[index % roomImages.length];
+            const isAvailable = room.is_available !== false;
+            
+            card.innerHTML = `
+                <div class="room-image">
+                    <img src="${imageUrl}" alt="${room.room_type}">
+                    <div class="room-badge ${!isAvailable ? 'unavailable' : ''}">
+                        ${isAvailable ? '✓ CÒN PHÒNG' : '✕ HẾT PHÒNG'}
+                    </div>
+                </div>
+                <div class="room-content">
+                    <div class="room-header">
+                        <h3 class="room-type">${room.room_type}</h3>
+                        <div class="room-price">
+                            <span class="price-amount">${formatPrice(room.price_per_night)}</span>
+                            <span class="price-label">/ đêm</span>
+                        </div>
+                    </div>
+                    <p class="hotel-name">
+                        <i class="fas fa-hotel"></i>
+                        Grand LuxStay Hotel - Hà Nội
+                    </p>
+                    <div class="amenities">
+                        <span class="amenity-tag"><i class="fas fa-wifi"></i> WiFi</span>
+                        <span class="amenity-tag"><i class="fas fa-tv"></i> TV</span>
+                        <span class="amenity-tag"><i class="fas fa-snowflake"></i> Điều hòa</span>
+                        ${room.amenities ? `<span class="amenity-tag"><i class="fas fa-star"></i> ${room.amenities}</span>` : ''}
+                    </div>
+                    <div class="room-footer">
+                        <div class="guests-info">
+                            <i class="fas fa-user-friends"></i>
+                            <span>Tối đa ${room.max_guests || 2} người</span>
+                        </div>
+                        <button class="book-button" onclick="bookRoom(${room.room_id})" ${!isAvailable ? 'disabled' : ''}>
+                            <i class="fas fa-calendar-check"></i>
+                            Đặt ngay
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+        
+        function formatPrice(price) {
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(price || 500000);
+        }
+        
+        function bookRoom(roomId) {
+            window.location.href = `booking.html?roomId=${roomId}`;
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', loadRooms);
+    </script>
+</body>
+</html>

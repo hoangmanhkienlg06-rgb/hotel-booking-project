@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặt phòng - Hotel Booking</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .booking-container {
+            background: white;
+            max-width: 800px;
+            width: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .back-link {
+            color: white;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+        
+        .back-link:hover {
+            opacity: 1;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .room-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .room-card h3 {
+            color: #1a237e;
+            margin-bottom: 10px;
+        }
+        
+        .room-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #555;
+        }
+        
+        .detail-item i {
+            color: #667eea;
+            width: 20px;
+        }
+        
+        .booking-form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .form-group label i {
+            color: #667eea;
+            width: 20px;
+        }
+        
+        .form-group input,
+        .form-group select {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .price-summary {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 25px 0;
+        }
+        
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        
+        .price-total {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #90caf9;
+            font-size: 24px;
+            color: #1a237e;
+            font-weight: bold;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(67, 233, 123, 0.3);
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+            display: none;
+        }
+        
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            border: 2px solid #ef9a9a;
+        }
+        
+        .success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 2px solid #a5d6a7;
+        }
+        
+        @media (max-width: 768px) {
+            .booking-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .room-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header {
+                padding: 20px 15px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            body {
+                padding: 10px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="booking-container">
+        <div class="header">
+            <h1><i class="fas fa-calendar-check"></i> Đặt phòng khách sạn</h1>
+            <a href="index.html" class="back-link">
+                <i class="fas fa-arrow-left"></i> Quay lại trang chủ
+            </a>
+        </div>
+        
+        <div class="content">
+            <!-- Thông tin phòng -->
+            <div class="room-card" id="roomInfo">
+                <h3>Đang tải thông tin phòng...</h3>
+                <div class="room-details">
+                    <div class="detail-item">
+                        <i class="fas fa-hotel"></i>
+                        <span id="hotelName">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-users"></i>
+                        <span id="maxGuests">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-wifi"></i>
+                        <span id="amenities">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-tag"></i>
+                        <span id="roomPrice">0 VNĐ/đêm</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Thông báo -->
+            <div class="message error" id="errorMsg"></div>
+            <div class="message success" id="successMsg"></div>
+            
+            <!-- Form đặt phòng -->
+            <form id="bookingForm">
+                <div class="booking-form">
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Họ tên</label>
+                        <input type="text" id="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-phone"></i> Số điện thoại</label>
+                        <input type="tel" id="phone" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-user-friends"></i> Số người</label>
+                        <select id="guests">
+                            <option value="1">1 người</option>
+                            <option value="2" selected>2 người</option>
+                            <option value="3">3 người</option>
+                            <option value="4">4 người</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-sign-in-alt"></i> Ngày nhận phòng</label>
+                        <input type="date" id="checkIn" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-sign-out-alt"></i> Ngày trả phòng</label>
+                        <input type="date" id="checkOut" required>
+                    </div>
+                </div>
+                
+                <!-- Tính giá -->
+                <div class="price-summary">
+                    <div class="price-item">
+                        <span>Giá phòng/đêm:</span>
+                        <span id="pricePerNight">0 VNĐ</span>
+                    </div>
+                    <div class="price-item">
+                        <span>Số đêm:</span>
+                        <span id="nightsCount">0</span>
+                    </div>
+                    <div class="price-total">
+                        <span>Tổng tiền:</span>
+                        <span id="totalPrice">0 VNĐ</span>
+                    </div>
+                </div>
+                
+                <button type="button" onclick="submitBooking()" class="submit-btn">
+                    <i class="fas fa-check-circle"></i> Xác nhận đặt phòng
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomId = urlParams.get('roomId') || 1;
+        let currentRoom = null;
+        
+        // Tải thông tin phòng
+        async function loadRoomInfo() {
+            try {
+                const response = await fetch(`${API_URL}/rooms/${roomId}`);
+                if (!response.ok) {
+                    throw new Error('Không tìm thấy phòng');
+                }
+                const data = await response.json();
+                currentRoom = data.data || data;
+            } catch (error) {
+                showError('Không thể tải thông tin phòng. Vui lòng thử lại sau.');
+                return;
+            }
+            
+            // Hiển thị thông tin
+            document.getElementById('roomInfo').querySelector('h3').textContent = currentRoom.room_type || 'Phòng';
+            document.getElementById('hotelName').textContent = currentRoom.hotel_name || 'Đang cập nhật';
+            document.getElementById('maxGuests').textContent = `Tối đa ${currentRoom.max_guests || 0} người`;
+            document.getElementById('amenities').textContent = currentRoom.amenities || 'Đang cập nhật';
+            document.getElementById('roomPrice').textContent = formatPrice(currentRoom.price_per_night) + '/đêm';
+            document.getElementById('pricePerNight').textContent = formatPrice(currentRoom.price_per_night);
+            
+            // Đặt ngày mặc định
+            const today = new Date();
+            const tomorrow = new Date(today);
+            const next3Days = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);
+            next3Days.setDate(today.getDate() + 3);
+            
+            document.getElementById('checkIn').value = formatDate(tomorrow);
+            document.getElementById('checkOut').value = formatDate(next3Days);
+            
+            // Auto-fill thông tin user
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            if (user.full_name) {
+                document.getElementById('name').value = user.full_name;
+                document.getElementById('email').value = user.email || '';
+            }
+            
+            // Tính giá ban đầu
+            calculatePrice();
+        }
+        
+        // Tính giá
+        function calculatePrice() {
+            const checkIn = new Date(document.getElementById('checkIn').value);
+            const checkOut = new Date(document.getElementById('checkOut').value);
+            
+            if (!checkIn || !checkOut || checkOut <= checkIn) {
+                updatePriceDisplay(0, 0);
+                return;
+            }
+            
+            const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+            const total = nights * currentRoom.price_per_night;
+            
+            updatePriceDisplay(nights, total);
+        }
+        
+        // Cập nhật hiển thị giá
+        function updatePriceDisplay(nights, total) {
+            document.getElementById('nightsCount').textContent = nights;
+            document.getElementById('totalPrice').textContent = formatPrice(total);
+        }
+        
+        // Gửi booking
+        async function submitBooking() {
+            const checkIn = document.getElementById('checkIn').value;
+            const checkOut = document.getElementById('checkOut').value;
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const guests = document.getElementById('guests').value;
+            
+            // Validate
+            if (!checkIn || !checkOut || !name || !email || !phone) {
+                showError('Vui lòng điền đầy đủ thông tin!');
+                return;
+            }
+            
+            if (new Date(checkOut) <= new Date(checkIn)) {
+                showError('Ngày trả phòng phải sau ngày nhận phòng!');
+                return;
+            }
+            
+            try {
+                // Gửi đến API
+                const response = await fetch(`${API_URL}/bookings`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        room_id: roomId,
+                        check_in_date: checkIn,
+                        check_out_date: checkOut,
+                        guest_name: name,
+                        guest_email: email,
+                        guest_phone: phone,
+                        guests: guests
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const bookingId = result.booking?.booking_id || result.booking_id;
+                    showSuccess('🎉 Đặt phòng thành công! Mã đặt: ' + (bookingId || 'Đang cập nhật'));
+                    document.getElementById('bookingForm').reset();
+                    setTimeout(() => window.location.href = 'index.html', 2000);
+                } else {
+                    showError(result.message || 'Đặt phòng thất bại!');
+                }
+            } catch (error) {
+                showError('Không thể kết nối máy chủ. Vui lòng thử lại!');
+            }
+        }
+        
+        // Helper functions
+        function formatPrice(amount) {
+            const value = Number(amount) || 0;
+            return value.toLocaleString('vi-VN') + ' VNĐ';
+        }
+        
+        function formatDate(date) {
+            return date.toISOString().split('T')[0];
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMsg');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            document.getElementById('successMsg').style.display = 'none';
+        }
+        
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMsg');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            document.getElementById('errorMsg').style.display = 'none';
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadRoomInfo();
+            
+            // Tính lại giá khi thay đổi ngày
+            document.getElementById('checkIn').addEventListener('change', calculatePrice);
+            document.getElementById('checkOut').addEventListener('change', calculatePrice);
+        });
+    </script>
+</body>
+</html>

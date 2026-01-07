@@ -1,0 +1,1808 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bảng điều khiển Quản trị - LuxStay Booking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --border: #e0e0e0;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* ===== ADMIN CONTAINER ===== */
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 2rem 0;
+            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .sidebar.collapsed .admin-logo-text,
+        .sidebar.collapsed .nav-text,
+        .sidebar.collapsed .user-details span,
+        .sidebar.collapsed .logout-btn span {
+            display: none;
+        }
+
+        .sidebar.collapsed .admin-logo {
+            justify-content: center;
+        }
+
+        .sidebar.collapsed .user-info {
+            flex-direction: column;
+            padding: 1rem;
+        }
+
+        .sidebar-toggle {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(67, 97, 238, 0.1);
+            border: none;
+            border-radius: 8px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-toggle:hover {
+            background: rgba(67, 97, 238, 0.2);
+        }
+
+        .sidebar.collapsed .sidebar-toggle {
+            right: 50%;
+            transform: translateX(50%);
+        }
+
+        .sidebar-header {
+            padding: 0 1.5rem 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .admin-logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .admin-logo-icon {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .admin-logo-text h2 {
+            font-size: 1.25rem;
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .admin-logo-text p {
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            background: rgba(67, 97, 238, 0.1);
+            border-radius: 10px;
+            margin: 0 1rem 1.5rem;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .user-details h4 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .user-details span {
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: 1rem 0;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            padding: 0.875rem 1.5rem;
+            margin: 0.25rem 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--gray);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .nav-item:hover {
+            background: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+        }
+
+        .nav-icon {
+            font-size: 1.25rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .nav-text {
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            margin: 1rem;
+            padding: 0.875rem 1.5rem;
+            background: rgba(247, 37, 133, 0.1);
+            color: var(--warning);
+            border: none;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: var(--warning);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            transition: margin-left 0.3s ease;
+        }
+
+        .sidebar.collapsed ~ .main-content {
+            margin-left: 80px;
+        }
+
+        /* ===== CONTENT PAGES ===== */
+        .content-page {
+            display: none;
+        }
+
+        .content-page.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* ===== DATA TABLE ===== */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .data-table thead {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table tbody tr:hover {
+            background: rgba(67, 97, 238, 0.05);
+        }
+
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .btn-action {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin: 0 0.25rem;
+        }
+
+        .btn-edit {
+            background: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+        }
+
+        .btn-edit:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-delete {
+            background: rgba(247, 37, 133, 0.1);
+            color: var(--warning);
+        }
+
+        .btn-delete:hover {
+            background: var(--warning);
+            color: white;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1rem 1.5rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .page-title h1 {
+            font-size: 1.75rem;
+            color: var(--dark);
+            font-weight: 700;
+        }
+
+        .page-title-icon {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .action-btn {
+            padding: 0.75rem 1.5rem;
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+        }
+
+        .current-time {
+            font-size: 0.875rem;
+            color: var(--gray);
+            padding: 0.5rem 1rem;
+            background: rgba(67, 97, 238, 0.1);
+            border-radius: 8px;
+        }
+
+        /* ===== STATS GRID ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.75rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+        }
+
+        .stat-card.bookings::before { background: var(--primary); }
+        .stat-card.rooms::before { background: var(--success); }
+        .stat-card.users::before { background: var(--warning); }
+        .stat-card.revenue::before { background: #7209b7; }
+
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            color: white;
+        }
+
+        .stat-icon.bookings { background: linear-gradient(135deg, var(--primary), var(--secondary)); }
+        .stat-icon.rooms { background: linear-gradient(135deg, var(--success), #2a9d8f); }
+        .stat-icon.users { background: linear-gradient(135deg, var(--warning), #f15bb5); }
+        .stat-icon.revenue { background: linear-gradient(135deg, #7209b7, #560bad); }
+
+        .stat-content h3 {
+            font-size: 0.875rem;
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-change {
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .stat-change.positive { color: #2ecc71; }
+        .stat-change.negative { color: #e74c3c; }
+
+        /* ===== RECENT ACTIVITIES ===== */
+        .dashboard-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.5rem;
+            color: var(--dark);
+        }
+
+        .view-all {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .activities-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 10px;
+            background: rgba(67, 97, 238, 0.05);
+            transition: background 0.3s ease;
+        }
+
+        .activity-item:hover {
+            background: rgba(67, 97, 238, 0.1);
+        }
+
+        .activity-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: white;
+        }
+
+        .activity-icon.booking { background: var(--primary); }
+        .activity-icon.checkin { background: var(--success); }
+        .activity-icon.payment { background: #7209b7; }
+        .activity-icon.cancel { background: var(--warning); }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-content h4 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-content p {
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+
+        .activity-time {
+            font-size: 0.75rem;
+            color: var(--gray);
+        }
+
+        /* ===== QUICK ACTIONS ===== */
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .action-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .action-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.1);
+        }
+
+        .action-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(67, 97, 238, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin: 0 auto 1rem;
+        }
+
+        .action-card h4 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-card p {
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 250px;
+            }
+            
+            .main-content {
+                margin-left: 250px;
+                padding: 1.5rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                transform: translateX(0);
+                padding: 1rem;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .top-bar {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        /* ===== CUSTOM SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+    </style>
+</head>
+<body>
+    <!-- STRICT LOGIN CHECK -->
+    <script>
+        (function checkLogin() {
+            const token = localStorage.getItem('adminToken');
+            if (!token) {
+                alert('⚠️ Vui lòng đăng nhập!');
+                window.location.href = 'login.html';
+                return;
+            }
+        })();
+    </script>
+
+    <div class="admin-container">
+        <!-- SIDEBAR -->
+        <div class="sidebar" id="sidebar">
+            <button class="sidebar-toggle" onclick="toggleSidebar()" title="Thu gọn/Mở rộng">
+                <i class="fas fa-bars" id="sidebarToggleIcon"></i>
+            </button>
+            <div class="sidebar-header">
+                <div class="admin-logo">
+                    <div class="admin-logo-icon">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <div class="admin-logo-text">
+                        <h2>LuxStay Quản trị</h2>
+                        <p>Hệ thống Quản lý Khách sạn</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- USER INFO -->
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">A</div>
+                <div class="user-details">
+                    <h4 id="userName">Quản trị viên</h4>
+                    <span id="userRole">Quản trị viên Cấp cao</span>
+                </div>
+            </div>
+
+            <!-- NAVIGATION -->
+            <nav class="nav-menu" id="sidebarNav">
+                <a class="nav-item" data-route="dashboard" href="#/admin/dashboard">
+                    <i class="fas fa-tachometer-alt nav-icon"></i>
+                    <span class="nav-text">Bảng điều khiển</span>
+                </a>
+                <a class="nav-item" data-route="bookings" href="#/admin/bookings">
+                    <i class="fas fa-calendar-check nav-icon"></i>
+                    <span class="nav-text">Quản lý đặt phòng</span>
+                </a>
+                <a class="nav-item" data-route="rooms" href="#/admin/rooms">
+                    <i class="fas fa-bed nav-icon"></i>
+                    <span class="nav-text">Quản lý phòng</span>
+                </a>
+                <a class="nav-item" data-route="room-create" href="#/admin/rooms/create">
+                    <i class="fas fa-plus-square nav-icon"></i>
+                    <span class="nav-text">Thêm phòng mới</span>
+                </a>
+                <a class="nav-item" data-route="users" href="#/admin/users">
+                    <i class="fas fa-users nav-icon"></i>
+                    <span class="nav-text">Quản lý người dùng</span>
+                </a>
+                <a class="nav-item" data-route="reports" href="#/admin/reports">
+                    <i class="fas fa-chart-bar nav-icon"></i>
+                    <span class="nav-text">Thống kê / Báo cáo</span>
+                </a>
+                <a class="nav-item" data-route="logout" href="#logout">
+                    <i class="fas fa-sign-out-alt nav-icon"></i>
+                    <span class="nav-text">Đăng xuất</span>
+                </a>
+            </nav>
+
+            <!-- LOGOUT -->
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Đăng xuất</span>
+            </button>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <!-- TOP BAR -->
+            <div class="top-bar fade-in">
+                <div class="page-title">
+                    <div class="page-title-icon" id="pageIcon">
+                        <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <h1 id="pageTitle">Bảng điều khiển Quản trị</h1>
+                </div>
+                <div class="admin-actions">
+                    <div class="current-time" id="currentTime"></div>
+                    <a href="../index.html" class="action-btn">
+                        <i class="fas fa-home"></i>
+                        Xem Website
+                    </a>
+                </div>
+            </div>
+
+            <!-- DASHBOARD PAGE -->
+            <div class="content-page active" id="page-dashboard">
+                <!-- STATS CARDS -->
+                <div class="stats-grid fade-in">
+                <div class="stat-card bookings">
+                    <div class="stat-icon bookings">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Tổng Đặt phòng</h3>
+                        <div class="stat-value" id="totalBookings">--</div>
+                        <div class="stat-change positive" id="bookingChangeText">
+                            <i class="fas fa-circle-notch fa-spin"></i>
+                            <span>Dữ liệu đang tải</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card rooms">
+                    <div class="stat-icon rooms">
+                        <i class="fas fa-bed"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Phòng Trống</h3>
+                        <div class="stat-value" id="availableRooms">--</div>
+                        <div class="stat-change negative" id="roomChangeText">
+                            <i class="fas fa-circle-notch fa-spin"></i>
+                            <span>Dữ liệu đang tải</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card users">
+                    <div class="stat-icon users">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Tổng Người dùng</h3>
+                        <div class="stat-value" id="totalUsers">--</div>
+                        <div class="stat-change positive" id="userChangeText">
+                            <i class="fas fa-circle-notch fa-spin"></i>
+                            <span>Dữ liệu đang tải</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card revenue">
+                    <div class="stat-icon revenue">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Tổng Doanh thu</h3>
+                        <div class="stat-value" id="totalRevenue">--</div>
+                        <div class="stat-change positive" id="revenueChangeText">
+                            <i class="fas fa-circle-notch fa-spin"></i>
+                            <span>Dữ liệu đang tải</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RECENT ACTIVITIES -->
+            <div class="dashboard-section fade-in">
+                <div class="section-header">
+                    <h2>📋 Hoạt động Gần đây</h2>
+                    <a href="#" class="view-all">
+                        Xem tất cả
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="activities-list" id="activitiesList">
+                    <!-- Activities loaded by JS -->
+                </div>
+            </div>
+
+            <!-- QUICK ACTIONS -->
+            <div class="dashboard-section fade-in">
+                <div class="section-header">
+                    <h2>⚡ Thao tác Nhanh</h2>
+                </div>
+                <div class="quick-actions-grid">
+                    <a href="#" class="action-card" onclick="quickAction('add_room')">
+                        <div class="action-icon">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <h4>Thêm Phòng Mới</h4>
+                        <p>Tạo danh sách phòng mới</p>
+                    </a>
+                    <a href="#" class="action-card" onclick="quickAction('check_in')">
+                        <div class="action-icon">
+                            <i class="fas fa-key"></i>
+                        </div>
+                        <h4>Nhận phòng Khách</h4>
+                        <p>Xử lý khách đến</p>
+                    </a>
+                    <a href="#" class="action-card" onclick="quickAction('generate_report')">
+                        <div class="action-icon">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </div>
+                        <h4>Tạo Báo cáo</h4>
+                        <p>Tạo báo cáo hàng tháng</p>
+                    </a>
+                    <a href="#" class="action-card" onclick="quickAction('send_notification')">
+                        <div class="action-icon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <h4>Gửi Thông báo</h4>
+                        <p>Thông báo cho tất cả người dùng</p>
+                    </a>
+                </div>
+            </div>
+            </div>
+
+            <!-- BOOKINGS PAGE -->
+            <div class="content-page" id="page-bookings">
+                <div class="dashboard-section fade-in">
+                    <div class="section-header">
+                        <h2>📋 Quản lý Đặt phòng</h2>
+                        <button class="action-btn" onclick="refreshBookings()">
+                            <i class="fas fa-sync-alt"></i>
+                            Làm mới
+                        </button>
+                    </div>
+                    <div id="bookingsTableContainer">
+                        <div class="loading">
+                            <i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ROOMS PAGE -->
+            <div class="content-page" id="page-rooms">
+                <div class="dashboard-section fade-in">
+                    <div class="section-header">
+                        <h2>🛏️ Quản lý Phòng</h2>
+                        <button class="action-btn" onclick="refreshRooms()">
+                            <i class="fas fa-sync-alt"></i>
+                            Làm mới
+                        </button>
+                    </div>
+                    <div id="roomsTableContainer">
+                        <div class="loading">
+                            <i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CREATE ROOM PAGE -->
+            <div class="content-page" id="page-room-create">
+                <div class="dashboard-section fade-in" style="max-width: 800px;">
+                    <div class="section-header">
+                        <h2>➕ Thêm phòng mới</h2>
+                        <button class="action-btn" onclick="navigateTo('rooms')">
+                            <i class="fas fa-arrow-left"></i>
+                            Quay lại danh sách
+                        </button>
+                    </div>
+                    <form id="createRoomForm" onsubmit="submitCreateRoom(event)">
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;">
+                            <div class="form-group">
+                                <label>Khách sạn</label>
+                                <select id="roomHotel" required style="padding:0.75rem;border:1px solid #e0e0e0;border-radius:8px;">
+                                    <option value="">Đang tải...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Loại phòng</label>
+                                <input id="roomType" required placeholder="VD: Deluxe View" style="padding:0.75rem;border:1px solid #e0e0e0;border-radius:8px;">
+                            </div>
+                            <div class="form-group">
+                                <label>Giá/đêm (VND)</label>
+                                <input id="roomPrice" type="number" min="0" required placeholder="800000" style="padding:0.75rem;border:1px solid #e0e0e0;border-radius:8px;">
+                            </div>
+                            <div class="form-group">
+                                <label>Số khách tối đa</label>
+                                <input id="roomGuests" type="number" min="1" value="2" required style="padding:0.75rem;border:1px solid #e0e0e0;border-radius:8px;">
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Tiện nghi</label>
+                                <input id="roomAmenities" placeholder="WiFi, TV, AC" style="padding:0.75rem;border:1px solid #e0e0e0;border-radius:8px;">
+                            </div>
+                            <div class="form-group">
+                                <label>Trạng thái</label>
+                                <select id="roomStatus" style="padding:0.75rem;border:1px solid #e0e0e0;border-radius:8px;">
+                                    <option value="true">Còn trống</option>
+                                    <option value="false">Đã đặt</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="action-btn" style="margin-top:1rem;background:var(--primary);color:white;border:none;">
+                            <i class="fas fa-save"></i> Lưu phòng
+                        </button>
+                        <div id="createRoomMessage" class="loading" style="display:none;"></div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- USERS PAGE -->
+            <div class="content-page" id="page-users">
+                <div class="dashboard-section fade-in">
+                    <div class="section-header">
+                        <h2>👥 Quản lý Người dùng</h2>
+                        <button class="action-btn" onclick="refreshUsers()">
+                            <i class="fas fa-sync-alt"></i>
+                            Làm mới
+                        </button>
+                    </div>
+                    <div id="usersTableContainer">
+                        <div class="loading">
+                            <i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REPORTS PAGE -->
+            <div class="content-page" id="page-reports">
+                <div class="dashboard-section fade-in">
+                    <div class="section-header">
+                        <h2>📊 Báo cáo & Thống kê</h2>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card bookings">
+                            <div class="stat-icon bookings">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>Tổng Đặt phòng</h3>
+                                <div class="stat-value" id="reportTotalBookings">-</div>
+                            </div>
+                        </div>
+                        <div class="stat-card revenue">
+                            <div class="stat-icon revenue">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>Tổng Doanh thu</h3>
+                                <div class="stat-value" id="reportTotalRevenue">-</div>
+                            </div>
+                        </div>
+                        <div class="stat-card users">
+                            <div class="stat-icon users">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>Tổng Người dùng</h3>
+                                <div class="stat-value" id="reportTotalUsers">-</div>
+                            </div>
+                        </div>
+                        <div class="stat-card rooms">
+                            <div class="stat-icon rooms">
+                                <i class="fas fa-bed"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>Tổng Phòng</h3>
+                                <div class="stat-value" id="reportTotalRooms">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SETTINGS PAGE -->
+            <div class="content-page" id="page-settings">
+                <div class="dashboard-section fade-in">
+                    <div class="section-header">
+                        <h2>⚙️ Cài đặt Hệ thống</h2>
+                    </div>
+                    <div style="max-width: 600px;">
+                        <div style="margin-bottom: 2rem;">
+                            <h3 style="margin-bottom: 1rem;">Thông tin Tài khoản</h3>
+                            <div id="adminProfileInfo" style="background: rgba(67, 97, 238, 0.05); padding: 1.5rem; border-radius: 10px;">
+                                <p><strong>Tên đăng nhập:</strong> <span id="profileUsername">-</span></p>
+                                <p style="margin-top: 0.5rem;"><strong>Tên hiển thị:</strong> <span id="profileName">-</span></p>
+                                <p style="margin-top: 0.5rem;"><strong>Vai trò:</strong> <span id="profileRole">-</span></p>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 style="margin-bottom: 1rem;">Hệ thống</h3>
+                            <div style="background: rgba(67, 97, 238, 0.05); padding: 1.5rem; border-radius: 10px;">
+                                <p><strong>Phiên bản:</strong> 1.0.0</p>
+                                <p style="margin-top: 0.5rem;"><strong>Trạng thái:</strong> <span style="color: #2ecc71;">Hoạt động bình thường</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        const API_URL = window.location.origin + '/api';
+        let currentPage = 'dashboard';
+
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', function() {
+            initRouter();
+            loadUserInfo();
+            updateCurrentTime();
+            loadRecentActivities();
+            startAutoRefresh();
+            
+            // Auto-update time every minute
+            setInterval(updateCurrentTime, 60000);
+        });
+
+        // ===== SIDEBAR TOGGLE =====
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const icon = document.getElementById('sidebarToggleIcon');
+            sidebar.classList.toggle('collapsed');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-chevron-right');
+        }
+
+        // ===== PAGE INITIALIZATION =====
+        function initializePage() {
+            // Load initial page data
+            if (currentPage === 'dashboard') {
+                loadDashboardStats();
+            } else if (currentPage === 'bookings') {
+                loadBookings();
+            } else if (currentPage === 'rooms') {
+                loadRooms();
+            } else if (currentPage === 'room-create') {
+                loadHotelsForRoomForm();
+            } else if (currentPage === 'users') {
+                loadUsers();
+            } else if (currentPage === 'reports') {
+                loadReports();
+            } else if (currentPage === 'settings') {
+                loadSettings();
+            }
+        }
+
+        // ===== USER INFO =====
+        function loadUserInfo() {
+            const userData = JSON.parse(localStorage.getItem('adminUser') || '{}');
+            
+            if (userData.username) {
+                document.getElementById('userName').textContent = userData.name || userData.username;
+                document.getElementById('userRole').textContent = userData.role === 'admin' ? 'Quản trị viên' : (userData.role || 'Quản trị viên');
+                document.getElementById('userAvatar').textContent = userData.name?.charAt(0) || userData.username?.charAt(0) || 'Q';
+            }
+        }
+
+        // ===== CURRENT TIME =====
+        function updateCurrentTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            document.getElementById('currentTime').textContent = 
+                now.toLocaleDateString('vi-VN', options);
+        }
+
+        // ===== RECENT ACTIVITIES =====
+        async function loadRecentActivities() {
+            const container = document.getElementById('activitiesList');
+            container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Đang tải hoạt động...</div>';
+
+            try {
+                const res = await fetch(`${API_URL}/admin/bookings`);
+                const data = await res.json();
+
+                if (!data.success || !data.bookings || data.bookings.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><i class="fas fa-bell-slash"></i><p>Chưa có hoạt động nào</p></div>';
+                    return;
+                }
+
+                container.innerHTML = '';
+                data.bookings.slice(0, 6).forEach(booking => {
+                    const statusColor = {
+                        'confirmed': 'booking',
+                        'pending': 'payment',
+                        'cancelled': 'cancel',
+                        'completed': 'checkin'
+                    }[booking.status] || 'booking';
+
+                    const timeText = booking.created_at 
+                        ? new Date(booking.created_at).toLocaleString('vi-VN') 
+                        : 'Vừa cập nhật';
+
+                    const guestName = booking.guest_name || 'Khách vãng lai';
+                    const amount = booking.total_price ? formatCurrency(booking.total_price) : '---';
+
+                    const item = document.createElement('div');
+                    item.className = 'activity-item fade-in';
+                    item.innerHTML = `
+                        <div class="activity-icon ${statusColor}">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4>Đặt phòng #${booking.booking_id}</h4>
+                            <p>${guestName} · ${amount}</p>
+                        </div>
+                        <div class="activity-time">${timeText}</div>
+                    `;
+                    container.appendChild(item);
+                });
+            } catch (error) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Không thể tải hoạt động</p></div>';
+            }
+        }
+
+        // ===== QUICK ACTIONS =====
+        function quickAction(action) {
+            const actions = {
+                'add_room': { message: 'Tính năng thêm phòng sẽ mở tại đây', icon: '🏨' },
+                'check_in': { message: 'Hộp thoại nhận phòng sẽ xuất hiện', icon: '🔑' },
+                'generate_report': { message: 'Đã bắt đầu tạo báo cáo', icon: '📊' },
+                'send_notification': { message: 'Bảng thông báo đã mở', icon: '🔔' }
+            };
+
+            const actionInfo = actions[action];
+            if (actionInfo) {
+                showNotification(`${actionInfo.icon} ${actionInfo.message}`);
+            }
+        }
+
+        // ===== TAB SWITCHING =====
+        function navigateTo(route) {
+            window.location.hash = route === 'logout' ? '#logout' : `#/admin/${route}`;
+        }
+
+        function initRouter() {
+            window.addEventListener('hashchange', handleRouteChange);
+            handleRouteChange();
+        }
+
+        function handleRouteChange() {
+            const hash = window.location.hash || '#/admin/dashboard';
+            if (hash === '#logout') {
+                logout();
+                return;
+            }
+
+            const route = hash.replace('#/admin/', '');
+            const allowed = ['dashboard','bookings','rooms','room-create','users','reports','settings'];
+            currentPage = allowed.includes(route) ? route : 'dashboard';
+
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.route === currentPage);
+            });
+
+            document.querySelectorAll('.content-page').forEach(page => {
+                page.classList.remove('active');
+            });
+
+            const pageElement = document.getElementById(`page-${currentPage}`);
+            if (pageElement) {
+                pageElement.classList.add('active');
+            }
+
+            const pageConfig = {
+                'dashboard': { title: 'Bảng điều khiển Quản trị', icon: 'fa-tachometer-alt' },
+                'bookings': { title: 'Quản lý Đặt phòng', icon: 'fa-calendar-check' },
+                'rooms': { title: 'Quản lý Phòng', icon: 'fa-bed' },
+                'room-create': { title: 'Thêm phòng mới', icon: 'fa-plus-square' },
+                'users': { title: 'Quản lý Người dùng', icon: 'fa-users' },
+                'reports': { title: 'Báo cáo & Thống kê', icon: 'fa-chart-bar' },
+                'settings': { title: 'Cài đặt Hệ thống', icon: 'fa-cog' }
+            };
+
+            const config = pageConfig[currentPage] || pageConfig.dashboard;
+            document.getElementById('pageTitle').textContent = config.title;
+            document.getElementById('pageIcon').innerHTML = `<i class="fas ${config.icon}"></i>`;
+
+            initializePage();
+        }
+
+        // ===== LOAD DASHBOARD STATS =====
+        async function loadDashboardStats() {
+            setStatChange('bookingChangeText', 'Đang tải dữ liệu...', false);
+            setStatChange('userChangeText', 'Đang tải dữ liệu...', false);
+            setStatChange('revenueChangeText', 'Đang tải dữ liệu...', false);
+            setStatChange('roomChangeText', 'Đang tải dữ liệu...', false);
+
+            try {
+                const [dashboardRes, roomsRes] = await Promise.all([
+                    fetch(`${API_URL}/admin/dashboard`),
+                    fetch(`${API_URL}/rooms`)
+                ]);
+
+                const dashboardData = await dashboardRes.json();
+                if (dashboardData.success) {
+                    document.getElementById('totalBookings').textContent = dashboardData.totalBookings ?? 0;
+                    document.getElementById('totalUsers').textContent = dashboardData.totalUsers ?? 0;
+                    document.getElementById('totalRevenue').textContent = formatCurrency(dashboardData.totalRevenue || 0);
+
+                    const stats = dashboardData.bookingStats || [];
+                    if (stats.length > 1) {
+                        const last = stats[stats.length - 1];
+                        const prev = stats[stats.length - 2];
+                        const change = prev.bookings ? ((last.bookings - prev.bookings) / prev.bookings) * 100 : 0;
+                        const changeText = `${change >= 0 ? 'Tăng' : 'Giảm'} ${Math.abs(change).toFixed(1)}% so với ngày trước`;
+                        setStatChange('bookingChangeText', changeText, false, change >= 0);
+                    } else {
+                        setStatChange('bookingChangeText', 'Cập nhật theo thời gian thực', false, true);
+                    }
+
+                    setStatChange('userChangeText', 'Cập nhật từ bảng Users', false, true);
+                    setStatChange('revenueChangeText', 'Doanh thu đã xác nhận', false, true);
+                } else {
+                    throw new Error(dashboardData.message || 'Không lấy được thống kê');
+                }
+
+                const roomsData = await roomsRes.json();
+                if (roomsData.success && roomsData.data) {
+                    const availableRooms = roomsData.data.filter(r => r.is_available !== false).length;
+                    document.getElementById('availableRooms').textContent = availableRooms || roomsData.data.length || 0;
+                    setStatChange('roomChangeText', 'Dựa trên trạng thái phòng thực tế', false, true);
+                } else {
+                    throw new Error('Không lấy được dữ liệu phòng');
+                }
+            } catch (error) {
+                console.error(error);
+                setStatChange('bookingChangeText', 'Không thể tải thống kê', true);
+                setStatChange('userChangeText', 'Không thể tải thống kê', true);
+                setStatChange('revenueChangeText', 'Không thể tải thống kê', true);
+                setStatChange('roomChangeText', 'Không thể tải thống kê', true);
+            }
+        }
+
+        // ===== LOAD BOOKINGS =====
+        async function loadBookings() {
+            const container = document.getElementById('bookingsTableContainer');
+            container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...</div>';
+
+            try {
+                const response = await fetch(`${API_URL}/admin/bookings`);
+                const result = await response.json();
+
+                if (result.success && result.bookings && result.bookings.length > 0) {
+                    let html = '<table class="data-table"><thead><tr>';
+                    html += '<th>ID</th><th>Khách hàng</th><th>Email</th><th>Phòng</th><th>Check-in/out</th><th>Số tiền</th><th>Trạng thái</th><th>Thao tác</th>';
+                    html += '</tr></thead><tbody>';
+
+                    result.bookings.forEach(booking => {
+                        const statusClass = {
+                            'confirmed': 'badge-success',
+                            'pending': 'badge-warning',
+                            'cancelled': 'badge-danger',
+                            'completed': 'badge-info'
+                        }[booking.status] || 'badge-info';
+
+                        const statusText = {
+                            'confirmed': 'Đã xác nhận',
+                            'pending': 'Đang chờ',
+                            'cancelled': 'Đã hủy',
+                            'completed': 'Hoàn thành'
+                        }[booking.status] || booking.status;
+
+                        const amount = booking.amount || booking.total_price || 0;
+                        const guestName = booking.guest_name || booking.full_name || 'N/A';
+                        const guestEmail = booking.guest_email || booking.email || 'N/A';
+                        const createdDate = booking.created_at ? new Date(booking.created_at).toLocaleDateString('vi-VN') : 'N/A';
+                        const roomId = booking.room_id || 'N/A';
+                        const checkInOut = `${booking.check_in_date ? new Date(booking.check_in_date).toLocaleDateString('vi-VN') : '-'} / ${booking.check_out_date ? new Date(booking.check_out_date).toLocaleDateString('vi-VN') : '-'}`;
+
+                        html += `<tr>
+                            <td>#${booking.booking_id || booking.id || 'N/A'}</td>
+                            <td>${guestName}</td>
+                            <td>${guestEmail}</td>
+                            <td>${roomId}</td>
+                            <td>${checkInOut}</td>
+                            <td>${amount.toLocaleString('vi-VN')} ₫</td>
+                            <td><span class="badge ${statusClass}">${statusText}</span></td>
+                            <td>
+                                <button class="btn-action btn-edit" onclick="viewBooking(${booking.booking_id || booking.id})"><i class="fas fa-eye"></i> Xem</button>
+                                <button class="btn-action btn-delete" onclick="updateBookingStatus(${booking.booking_id || booking.id}, 'confirmed')"><i class="fas fa-check"></i> Xác nhận</button>
+                                <button class="btn-action btn-delete" onclick="updateBookingStatus(${booking.booking_id || booking.id}, 'cancelled')"><i class="fas fa-times"></i> Hủy</button>
+                            </td>
+                        </tr>`;
+                    });
+
+                    html += '</tbody></table>';
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = '<div class="empty-state"><i class="fas fa-calendar-times"></i><p>Chưa có đặt phòng nào</p></div>';
+                }
+            } catch (error) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Lỗi khi tải dữ liệu. Vui lòng thử lại sau.</p></div>';
+                // Error handled silently for security
+            }
+        }
+
+        function refreshBookings() {
+            loadBookings();
+        }
+
+        async function viewBooking(id) {
+            try {
+                const res = await fetch(`${API_URL}/admin/bookings/${id}`);
+                const data = await res.json();
+                if (!data.success) throw new Error(data.message || 'Không lấy được dữ liệu');
+
+                const b = data.booking;
+                const detail = `
+Booking #${b.booking_id}
+Khách: ${b.guest_name || 'N/A'} (${b.guest_email || 'N/A'})
+Phòng: ${b.room_type || b.room_id}
+Ngày: ${b.check_in_date ? new Date(b.check_in_date).toLocaleDateString('vi-VN') : '-'} - ${b.check_out_date ? new Date(b.check_out_date).toLocaleDateString('vi-VN') : '-'}
+Trạng thái: ${b.status}
+Tổng tiền: ${formatCurrency(b.total_price || 0)}
+Tạo lúc: ${b.created_at ? new Date(b.created_at).toLocaleString('vi-VN') : '-'}
+                `;
+                alert(detail);
+            } catch (error) {
+                showNotification('Không thể xem chi tiết đặt phòng', true);
+            }
+        }
+
+        async function updateBookingStatus(id, status) {
+            const confirmMsg = status === 'cancelled' ? 'Hủy đặt phòng này?' : 'Xác nhận đặt phòng này?';
+            if (!confirm(confirmMsg)) return;
+            try {
+                const res = await fetch(`${API_URL}/admin/bookings/${id}/status`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status })
+                });
+                const data = await res.json();
+                if (!data.success) throw new Error(data.message || 'Cập nhật thất bại');
+                showNotification(data.message || 'Đã cập nhật');
+                loadBookings();
+                if (currentPage === 'dashboard') loadDashboardStats();
+            } catch (error) {
+                showNotification(error.message || 'Không thể cập nhật', true);
+            }
+        }
+
+        // ===== LOAD ROOMS =====
+        async function loadRooms() {
+            const container = document.getElementById('roomsTableContainer');
+            container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...</div>';
+
+            try {
+                const response = await fetch(`${API_URL}/rooms`);
+                const result = await response.json();
+
+                if (result.success && result.data && result.data.length > 0) {
+                    let html = '<table class="data-table"><thead><tr>';
+                    html += '<th>ID</th><th>Loại phòng</th><th>Khách sạn</th><th>Giá/đêm</th><th>Trạng thái</th><th>Thao tác</th>';
+                    html += '</tr></thead><tbody>';
+
+                    result.data.forEach(room => {
+                        const isAvailable = room.is_available !== false;
+                        const statusBadge = isAvailable 
+                            ? '<span class="badge badge-success">Trống</span>'
+                            : '<span class="badge badge-danger">Đã đặt</span>';
+
+                        const price = room.price_per_night || room.price || 0;
+                        const roomType = room.room_type || room.type || 'N/A';
+                        const hotel = room.hotel_name || 'N/A';
+
+                        html += `<tr>
+                            <td>#${room.room_id || room.id || 'N/A'}</td>
+                            <td>${roomType}</td>
+                            <td>${hotel}</td>
+                            <td>${price.toLocaleString('vi-VN')} ₫</td>
+                            <td>${statusBadge}</td>
+                            <td>
+                                <button class="btn-action btn-edit" onclick="promptUpdateRoom(${room.room_id || room.id}, ${price}, ${isAvailable})">
+                                    <i class="fas fa-edit"></i> Sửa
+                                </button>
+                            </td>
+                        </tr>`;
+                    });
+
+                    html += '</tbody></table>';
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = '<div class="empty-state"><i class="fas fa-bed"></i><p>Chưa có phòng nào</p></div>';
+                }
+            } catch (error) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Lỗi khi tải dữ liệu. Vui lòng thử lại sau.</p></div>';
+                // Error handled silently for security
+            }
+        }
+
+        function refreshRooms() {
+            loadRooms();
+        }
+
+        async function promptUpdateRoom(id, price, available) {
+            const newPrice = prompt(`Giá hiện tại: ${price}. Nhập giá mới (VND):`, price);
+            if (newPrice === null) return;
+            const newStatus = confirm('Đặt trạng thái "Còn trống"? Ấn Cancel nếu muốn chuyển sang "Đã đặt"');
+            try {
+                const res = await fetch(`${API_URL}/rooms/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ price_per_night: Number(newPrice), is_available: newStatus })
+                });
+                const data = await res.json();
+                if (!data.success) throw new Error(data.message || 'Cập nhật thất bại');
+                showNotification('Đã cập nhật phòng');
+                loadRooms();
+            } catch (error) {
+                showNotification(error.message || 'Không thể cập nhật phòng', true);
+            }
+        }
+
+        // ===== LOAD USERS =====
+        async function loadUsers() {
+            const container = document.getElementById('usersTableContainer');
+            container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...</div>';
+
+            try {
+                const response = await fetch(`${API_URL}/admin/users`);
+                const result = await response.json();
+
+                if (result.success && result.users && result.users.length > 0) {
+                    let html = '<table class="data-table"><thead><tr>';
+                    html += '<th>ID</th><th>Tên</th><th>Email</th><th>Trạng thái</th><th>Ngày đăng ký</th><th>Thao tác</th>';
+                    html += '</tr></thead><tbody>';
+
+                    result.users.forEach(user => {
+                        const createdDate = user.created_at ? new Date(user.created_at).toLocaleDateString('vi-VN') : 'N/A';
+                        const fullName = user.full_name || 'N/A';
+                        const email = user.email || 'N/A';
+                        const locked = user.is_locked ? true : false;
+
+                        html += `<tr>
+                            <td>#${user.user_id || user.id || 'N/A'}</td>
+                            <td>${fullName}</td>
+                            <td>${email}</td>
+                            <td>${locked ? '<span class="badge badge-danger">Đã khóa</span>' : '<span class="badge badge-success">Hoạt động</span>'}</td>
+                            <td>${createdDate}</td>
+                            <td>
+                                <button class="btn-action btn-edit" onclick="viewUser(${user.user_id || user.id})"><i class="fas fa-eye"></i> Xem</button>
+                                <button class="btn-action btn-delete" onclick="toggleLockUser(${user.user_id || user.id}, ${locked})">
+                                    <i class="fas ${locked ? 'fa-lock-open' : 'fa-lock'}"></i> ${locked ? 'Mở khóa' : 'Khóa'}
+                                </button>
+                            </td>
+                        </tr>`;
+                    });
+
+                    html += '</tbody></table>';
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><p>Chưa có người dùng nào</p></div>';
+                }
+            } catch (error) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Lỗi khi tải dữ liệu. Vui lòng thử lại sau.</p></div>';
+                // Error handled silently for security
+            }
+        }
+
+        function refreshUsers() {
+            loadUsers();
+        }
+
+        async function viewUser(id) {
+            try {
+                const res = await fetch(`${API_URL}/admin/users/${id}`);
+                const data = await res.json();
+                if (!data.success) throw new Error(data.message || 'Không lấy được dữ liệu');
+                const u = data.user;
+                alert(`
+Người dùng #${u.user_id}
+Tên: ${u.full_name || 'N/A'}
+Email: ${u.email}
+SĐT: ${u.phone || 'N/A'}
+Trạng thái: ${u.is_locked ? 'Đã khóa' : 'Hoạt động'}
+Ngày tạo: ${u.created_at ? new Date(u.created_at).toLocaleString('vi-VN') : '-'}
+                `);
+            } catch (error) {
+                showNotification(error.message || 'Không thể xem chi tiết', true);
+            }
+        }
+
+        async function toggleLockUser(id, locked) {
+            if (!confirm(locked ? 'Mở khóa tài khoản này?' : 'Khóa tài khoản này?')) return;
+            try {
+                const res = await fetch(`${API_URL}/admin/users/${id}/lock`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ locked: !locked })
+                });
+                const data = await res.json();
+                if (!data.success) throw new Error(data.message || 'Cập nhật thất bại');
+                showNotification(data.message || 'Đã cập nhật');
+                loadUsers();
+            } catch (error) {
+                showNotification(error.message || 'Không thể cập nhật', true);
+            }
+        }
+
+        // ===== LOAD REPORTS =====
+        async function loadReports() {
+            try {
+                const [dashboardRes, roomsRes] = await Promise.all([
+                    fetch(`${API_URL}/admin/dashboard`),
+                    fetch(`${API_URL}/rooms`)
+                ]);
+
+                const dashboard = await dashboardRes.json();
+                if (dashboard.success) {
+                    document.getElementById('reportTotalBookings').textContent = dashboard.totalBookings ?? 0;
+                    document.getElementById('reportTotalRevenue').textContent = formatCurrency(dashboard.totalRevenue || 0);
+                    document.getElementById('reportTotalUsers').textContent = dashboard.totalUsers ?? 0;
+                }
+
+                const rooms = await roomsRes.json();
+                if (rooms.success && rooms.data) {
+                    document.getElementById('reportTotalRooms').textContent = rooms.data.length;
+                }
+            } catch (error) {
+                // Silent fail
+            }
+        }
+
+        // ===== LOAD HOTELS FOR CREATE ROOM =====
+        async function loadHotelsForRoomForm() {
+            const select = document.getElementById('roomHotel');
+            select.innerHTML = '<option value="">Đang tải...</option>';
+            try {
+                const res = await fetch(`${API_URL}/hotels`);
+                const data = await res.json();
+                if (data.success && data.data && data.data.length) {
+                    select.innerHTML = data.data.map(h => `<option value="${h.hotel_id}">${h.name}</option>`).join('');
+                } else {
+                    select.innerHTML = '<option value="">Chưa có khách sạn</option>';
+                }
+            } catch (error) {
+                select.innerHTML = '<option value="">Không tải được danh sách khách sạn</option>';
+            }
+        }
+
+        async function submitCreateRoom(event) {
+            event.preventDefault();
+            const msg = document.getElementById('createRoomMessage');
+            msg.style.display = 'block';
+            msg.textContent = 'Đang lưu...';
+            try {
+                const payload = {
+                    hotel_id: document.getElementById('roomHotel').value || null,
+                    room_type: document.getElementById('roomType').value,
+                    price_per_night: Number(document.getElementById('roomPrice').value),
+                    max_guests: Number(document.getElementById('roomGuests').value),
+                    amenities: document.getElementById('roomAmenities').value,
+                    is_available: document.getElementById('roomStatus').value === 'true'
+                };
+                const res = await fetch(`${API_URL}/rooms`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!data.success) throw new Error(data.message || 'Thêm phòng thất bại');
+                msg.textContent = '✅ Đã thêm phòng!';
+                setTimeout(() => {
+                    navigateTo('rooms');
+                    loadRooms();
+                }, 800);
+            } catch (error) {
+                msg.textContent = error.message || 'Lỗi khi thêm phòng';
+            }
+        }
+
+        // ===== HELPERS =====
+        function formatCurrency(amount) {
+            const number = Number(amount) || 0;
+            return number.toLocaleString('vi-VN', { style: 'currency', currency: 'VND', minimumFractionDigits: 0 });
+        }
+
+        function setStatChange(elementId, message, isError = false, isPositive = true) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            el.classList.remove('positive', 'negative');
+            el.classList.add(isPositive ? 'positive' : 'negative');
+            el.innerHTML = `
+                <i class="fas ${isError ? 'fa-exclamation-triangle' : (isPositive ? 'fa-arrow-up' : 'fa-arrow-down')}"></i>
+                <span>${message}</span>
+            `;
+        }
+
+        // ===== LOAD SETTINGS =====
+        function loadSettings() {
+            const userData = JSON.parse(localStorage.getItem('adminUser') || '{}');
+            document.getElementById('profileUsername').textContent = userData.username || 'N/A';
+            document.getElementById('profileName').textContent = userData.name || 'N/A';
+            document.getElementById('profileRole').textContent = userData.role === 'admin' ? 'Quản trị viên' : 'N/A';
+        }
+
+        // ===== NOTIFICATION =====
+        function showNotification(message, isError = false) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'notification fade-in';
+            notification.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: white;
+                color: var(--dark);
+                padding: 1rem 1.5rem;
+                border-radius: 10px;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+                z-index: 9999;
+                border-left: 4px solid var(--primary);
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                min-width: 300px;
+                transform: translateX(100%);
+                animation: slideIn 0.3s ease forwards;
+            `;
+
+            notification.innerHTML = `
+                <i class="fas ${isError ? 'fa-exclamation-circle' : 'fa-info-circle'}" style="color: ${isError ? 'var(--warning)' : 'var(--primary)'};"></i>
+                <span>${message}</span>
+            `;
+
+            document.body.appendChild(notification);
+
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease forwards';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Add slide animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                to { transform: translateX(0); }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); }
+                to { transform: translateX(100%); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // ===== AUTO REFRESH =====
+        function startAutoRefresh() {
+            // Refresh dashboard stats every 30 seconds if on dashboard page
+            setInterval(() => {
+                if (currentPage === 'dashboard') {
+                    loadDashboardStats();
+                }
+            }, 30000);
+        }
+
+        // ===== LOGOUT =====
+        function logout() {
+            if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
+                localStorage.removeItem('adminToken');
+                localStorage.removeItem('adminUser');
+                window.location.href = 'login.html';
+            }
+        }
+
+        // ===== KEYBOARD SHORTCUTS =====
+        document.addEventListener('keydown', function(e) {
+            // Ctrl + L = Logout
+            if (e.ctrlKey && e.key === 'l') {
+                e.preventDefault();
+                logout();
+            }
+            
+            // Ctrl + D = Dashboard
+            if (e.ctrlKey && e.key === 'd') {
+                e.preventDefault();
+                switchTab('dashboard');
+            }
+            
+            // Esc = Back to home
+            if (e.key === 'Escape') {
+                window.location.href = '../index.html';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,163 +1,113 @@
-# 🏨 Hotel Booking Website
+🏨 Hotel Booking Website - Đồ án I
+📖 1. Giới thiệu
+Dự án được thực hiện trong khuôn khổ học phần "Đồ án I" tại Trường Quốc tế - Đại học Quốc gia Hà Nội (VNU-IS). Mục tiêu là xây dựng một nền tảng quản lý lưu trú trực tuyến, giúp tối ưu hóa toàn bộ quy trình tương tác giữa khách hàng và bộ phận quản lý khách sạn.
 
-![Hotel Booking](https://img.shields.io/badge/Project-Hotel%20Booking-blue)
-![Node.js](https://img.shields.io/badge/Backend-Node.js-green)
-![SQL Server](https://img.shields.io/badge/Database-SQL%20Server-red)
-![Status](https://img.shields.io/badge/Status-Completed-brightgreen)
+✨ 2. Tính năng chính
+👤 Cho khách hàng
+Hệ thống tài khoản: Đăng ký, đăng nhập với bảo mật JWT.
 
-## 📖 Giới thiệu
-Website đặt phòng khách sạn là đồ án học phần **"Đồ án I"** tại Trường Quốc tế - Đại học Quốc gia Hà Nội. Hệ thống cho phép người dùng tìm kiếm, đặt phòng khách sạn trực tuyến và quản trị viên quản lý thông tin phòng, đơn đặt.
+Tìm kiếm thông minh: Lọc phòng theo ngày trống, địa điểm và ngân sách.
 
-## ✨ Tính năng chính
+Quy trình đặt phòng: Xem chi tiết phòng, chọn ngày và gửi yêu cầu đặt phòng thời gian thực.
 
-### 👤 Cho người dùng
-- ✅ Đăng ký và đăng nhập tài khoản
-- ✅ Tìm kiếm phòng theo ngày, địa điểm, giá
-- ✅ Xem chi tiết phòng (hình ảnh, tiện nghi)
-- ✅ Đặt phòng trực tuyến
-- ✅ Xem lịch sử đặt phòng
+Cá nhân hóa: Quản lý lịch sử đặt phòng và theo dõi trạng thái đơn.
 
-### 👨‍💼 Cho quản trị viên
-- ✅ Quản lý thông tin khách sạn và phòng
-- ✅ Quản lý đơn đặt (duyệt/hủy)
-- ✅ Quản lý người dùng
-- ✅ Xem báo cáo doanh thu
+👨‍💼 Cho quản trị viên (Dashboard)
+Quản lý khách sạn: Thêm, sửa, xóa thông tin khách sạn và các loại phòng.
 
-## 🛠 Công nghệ sử dụng
+Xử lý giao dịch: Duyệt hoặc hủy đơn đặt phòng của khách hàng.
 
-| Layer | Technology |
-|-------|------------|
-| **Frontend** | HTML5, CSS3, JavaScript (ES6+) |
-| **Backend** | Node.js, Express.js |
-| **Database** | Microsoft SQL Server |
-| **API** | RESTful API |
-| **Tools** | Git, VS Code, Postman, SQL Server Management Studio |
+Thống kê & Báo cáo: Theo dõi doanh thu, phân tích biểu đồ tăng trưởng người dùng.
 
-## 📁 Cấu trúc dự án
+🛠 3. Công nghệ sử dụng
+Hệ thống được xây dựng theo mô hình Client-Server:
 
+Phần	Công nghệ
+Frontend	HTML5, CSS3 (Flexbox/Grid), JavaScript ES6, Fetch API
+Backend	Node.js, Express.js
+Database	Microsoft SQL Server (sử dụng Stored Procedures)
+Bảo mật	JWT (JSON Web Token) & Bcrypt
+📁 4. Cấu trúc dự án
 ```bash
 hotel-booking-project/
-├── .vscode/                    # VS Code configuration
+├── .vscode/
 │   └── launch.json
-├── backend/                    # Server-side application
-│   ├── config/                # Configuration files
-│   ├── routes/                # API route handlers
-│   ├── .env                   # Environment variables
-│   ├── package.json           # Dependencies
-│   ├── package-lock.json      # Lock file
-│   └── server.js              # Main server file
-├── database/                  # Database scripts
-│   ├── 01_create_tables.sql  # Create database tables
-│   ├── 02_sample_data.sql    # Sample data insertion
-│   └── 03_backup_script.sql  # Backup script
-├── documentation/             # Project documentation
-└── frontend/                  # Client-side application
-    ├── admin/                 # Admin panel
-    │   ├── dashboard.html    # Admin dashboard
-    │   └── login.html        # Admin login
-    ├── booking.html          # Room booking page
-    ├── index.html           # Homepage
+├── backend/                  # Server-side application
+│   ├── config/              # Kết nối Database
+│   ├── routes/              # Định nghĩa các API Endpoints
+│   ├── .env                 # Biến môi trường
+│   ├── package.json         # Dependencies
+│   ├── package-lock.json    # Lock file
+│   └── server.js            # Điểm khởi chạy ứng dụng
+├── database/                # Script quản lý dữ liệu
+│   ├── 01_create_tables.sql # Tạo bảng và ràng buộc
+│   ├── 02_sample_data.sql   # Dữ liệu mẫu để demo
+│   └── 03_backup_script.sql # Script backup
+└── frontend/                # Client-side (Giao diện người dùng)
+    ├── admin/               # Giao diện dành cho quản trị
+    │   ├── dashboard.html   # Admin dashboard
+    │   └── login.html       # Admin login
+    ├── booking.html         # Trang đặt phòng
+    ├── index.html           # Trang chủ
     ├── login.html           # User login
     ├── register.html        # User registration
-    ├── script.js            # JavaScript logic
+    ├── script.js            # Logic xử lý phía người dùng
     └── style.css            # CSS styling
-```
+🚀 5. Hướng dẫn cài đặt
+Bước 1: Cài đặt Database
+Mở SQL Server Management Studio (SSMS)
 
-text
+Chạy lần lượt các file trong thư mục /database:
 
-## 🚀 Cài đặt và chạy ứng dụng
+01_schema.sql
 
-### Yêu cầu hệ thống
-- Node.js (v18+)
-- SQL Server (2019+)
-- Git
+02_procedures.sql
 
-### Bước 1: Clone repository
-```bash
-git clone https://github.com/hoangmanhkienlg06-rgb/hotel-booking-project.git
-cd hotel-booking-project
-Bước 2: Cài đặt backend
+03_seed_data.sql
+
+Bước 2: Cấu hình Backend
+Di chuyển vào thư mục backend:
+
 bash
 cd backend
+Cài đặt dependencies:
+
+bash
 npm install
-Bước 3: Cấu hình database
-Mở SQL Server Management Studio
-
-Chạy file database/create_tables.sql
-
-Chạy file database/sample_data.sql
-
-Bước 4: Cấu hình environment
-Tạo file .env trong thư mục backend/:
+Tạo file .env và cấu hình:
 
 env
+PORT=3000
 DB_SERVER=localhost
 DB_NAME=HotelBooking
 DB_USER=sa
 DB_PASSWORD=your_password
-PORT=3000
-JWT_SECRET=your_secret_key
-Bước 5: Khởi chạy server
+JWT_SECRET=hotel_booking_secret_2025
+Bước 3: Khởi chạy ứng dụng
+Chạy server backend:
+
 bash
 npm start
-# Hoặc cho development
-npm run dev
-Bước 6: Mở frontend
-Mở file frontend/index.html trong trình duyệt
+Mở trình duyệt và truy cập:
 
-🔗 API Endpoints
-Method	Endpoint	Mô tả
-POST	/api/auth/register	Đăng ký người dùng
-POST	/api/auth/login	Đăng nhập
-GET	/api/rooms	Lấy danh sách phòng
-POST	/api/bookings	Tạo đơn đặt
-GET	/api/admin/bookings	Lấy tất cả đơn đặt (Admin)
-PUT	/api/admin/rooms/:id	Cập nhật phòng (Admin)
-🗄️ Database Schema
-Các bảng chính
-Users - Thông tin người dùng
+Frontend: Mở file frontend/index.html
 
-Hotels - Thông tin khách sạn
+Backend API: http://localhost:3000
 
-Rooms - Thông tin phòng
+🗄️ 6. Mô hình cơ sở dữ liệu
+Các bảng chính trong hệ thống:
 
-Bookings - Thông tin đặt phòng
+Users: Thông tin người dùng và phân quyền (User/Admin)
 
-Sơ đồ quan hệ
-text
-Users (1) ──── (M) Bookings
-                    │
-                    │
-Rooms  (1) ──── (M) Bookings
-                    │
-                    │
-Hotels (1) ──── (M) Rooms
-📸 Hình ảnh demo
-Trang chủ
-https://via.placeholder.com/800x400/3498db/ffffff?text=Homepage+-+Hotel+Booking
+Hotels: Thông tin khách sạn
 
-Trang đặt phòng
-https://via.placeholder.com/800x400/2ecc71/ffffff?text=Booking+Page
+Rooms: Thông tin các phòng trong khách sạn
 
-Trang quản trị
-https://via.placeholder.com/800x400/e74c3c/ffffff?text=Admin+Dashboard
+Bookings: Lưu trữ giao dịch đặt phòng (ngày nhận/trả, tổng tiền)
 
-👥 Thành viên nhóm
-Tên	Vai trò	Công việc chính
-Hoàng Mạnh Kiên	Full-stack Developer	Backend API, Database, Integration
-Trần Đức Minh	Full-stack Developer	Frontend UI, Design, Testing
-🎓 Thông tin học phần
-Môn học: Đồ án I
+(Chi tiết quan hệ giữa các bảng có trong file 01_schema.sql)
 
-Trường: Trường Quốc tế - Đại học Quốc gia Hà Nội
-
-Giảng viên hướng dẫn: Đỗ Tiến Thành
-
-Thời gian thực hiện: Tháng 11/2025 - Tháng 12/2025
-
-📞 Liên hệ
-Email: hoangmanhkienlg06@gmail.com
-
-GitHub: @hoangmanhkienlg06-rgb
-
-Repository: hotel-booking-project
+👥 7. Thành viên nhóm
+Họ và tên	Vai trò	Công việc phụ trách
+Hoàng Mạnh Kiên	Nhóm trưởng	Thiết kế Database, Xây dựng API Backend, Bảo mật hệ thống
+Trần Đức Minh	Thành viên	Phát triển giao diện (UI/UX), Kết nối API Frontend
